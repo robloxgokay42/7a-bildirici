@@ -12,9 +12,9 @@
     <header>
         <h1>7-A Sınıfı</h1>
         <div class="menu-btn" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
         </div>
     </header>
 
@@ -23,7 +23,6 @@
         <ul>
             <li onclick="showSection('home')">🏠 Ana Sayfa</li>
             <li onclick="showSection('info')">📋 Sınıf Bilgisi</li>
-            <li onclick="showSection('games')">🎮 Mini Oyunlar</li>
         </ul>
     </nav>
 
@@ -34,43 +33,33 @@
         <section id="home-section" class="active-section">
             <div class="timer-container">
                 <div class="current-lesson-info">
-                    <h2 id="lesson-name">Ders Yükleniyor...</h2>
+                    <h2 id="lesson-name">Yükleniyor...</h2>
                     <p id="teacher-name"></p>
                 </div>
-                <div class="countdown-box">
-                    <span id="countdown-timer">--</span>
-                    <span class="countdown-label">DK.<br>KALDI</span>
+                <div class="countdown-row">
+                    <span id="countdown-timer">00</span>
+                    <div class="label-box">
+                        <span class="dk">DK.</span>
+                        <span class="kaldi">KALDI</span>
+                    </div>
                 </div>
-                <p id="next-lesson-info">Sonraki ders: ...</p>
+                <p id="next-lesson-info">...</p>
             </div>
         </section>
 
         <section id="info-section">
             <div class="info-card">
                 <h2>Sınıf Bilgileri</h2>
-                <ul>
-                    <li><strong>Okul:</strong> Mareşal Mustafa Kemal Ortaokulu</li>
-                    <li><strong>Sınıf / Şube:</strong> 7-A</li>
-                    <li><strong>Sınıf Öğretmeni:</strong> Abdi Işık</li>
-                    <li><strong>Toplam Ders Saati:</strong> 35</li>
-                    <li><strong>Sınıf Başkanı:</strong> [Buraya Yazılacak]</li>
-                    <li><strong>Başkan Yardımcısı:</strong> [Buraya Yazılacak]</li>
-                </ul>
-            </div>
-            <div class="schedule-container">
-                <h3>Haftalık Ders Programı</h3>
-                <div class="table-responsive">
-                    <table id="schedule-table">
-                        </table>
+                <div class="info-grid">
+                    <p><strong>Öğretmen:</strong> Abdi Işık</p>
+                    <p><strong>Okul:</strong> Mareşal Mustafa Kemal O.O.</p>
                 </div>
             </div>
-        </section>
-
-        <section id="games-section">
-            <div class="games-card">
-                <h2>Mini Oyunlar</h2>
-                <p>Buraya eğlenceli oyunlar eklenecek!</p>
-                <button class="game-btn">Yakında...</button>
+            <div class="schedule-container">
+                <h3>Ders Programı</h3>
+                <div class="table-responsive">
+                    <table id="schedule-table"></table>
+                </div>
             </div>
         </section>
 
