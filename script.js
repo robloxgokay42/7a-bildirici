@@ -1,5 +1,4 @@
-// Resimdeki program verileri
-const programVerisi = {
+const dersProgrami = {
     saatler: {
         normal: [
             { bas: "08:50", bit: "09:30" }, { bas: "09:45", bit: "10:25" },
@@ -14,46 +13,51 @@ const programVerisi = {
             { bas: "14:10", bit: "14:50" }
         ]
     },
-    gunler: {
-        1: ["SEÇ.İNG", "SEÇ.İNG", "FEN", "FEN", "TÜRKÇE", "TEKTAS", "TEKTAS"],
-        2: ["MAT", "MAT", "İNG", "İNG", "SOS", "GÖRSEL", "SEÇ.KÜL"],
-        3: ["MAT", "MAT", "SEÇ.KÜL", "MÜZİK", "TÜRKÇE", "TÜRKÇE", "REHBERLİK"],
-        4: ["İNG", "İNG", "FEN", "FEN", "SEÇ.MAT", "TÜRKÇE", "TÜRKÇE"],
-        5: ["DİN", "DİN", "BEDEN", "BEDEN", "SOS", "SOS", "MAT"]
+    dersler: {
+        1: [{d:"SEÇ.İNG", o:"A.IŞIK"}, {d:"SEÇ.İNG", o:"A.IŞIK"}, {d:"FEN", o:"S.BAKAY"}, {d:"FEN", o:"S.BAKAY"}, {d:"TRK 78", o:"E.GÜRSOY"}, {d:"TEKTAS", o:"D.KARAGÖ"}, {d:"TEKTAS", o:"D.KARAGÖ"}],
+        2: [{d:"MAT", o:"C.KUTLU"}, {d:"MAT", o:"C.KUTLU"}, {d:"İNG 7-8", o:"A.IŞIK"}, {d:"İNG 7-8", o:"A.IŞIK"}, {d:"SOS", o:"M.MERAM"}, {d:"GÖR", o:"E.KARAKA"}, {d:"SEÇ.KÜL", o:"H.KOÇHAN"}],
+        3: [{d:"MAT", o:"C.KUTLU"}, {d:"MAT", o:"C.KUTLU"}, {d:"SEÇ.KÜL", o:"H.KOÇHAN"}, {d:"MÜZ", o:"H.ERDOĞA"}, {d:"TRK 78", o:"E.GÜRSOY"}, {d:"TRK 78", o:"E.GÜRSOY"}, {d:"REH", o:"A.IŞIK"}],
+        4: [{d:"İNG 7-8", o:"A.IŞIK"}, {d:"İNG 7-8", o:"A.IŞIK"}, {d:"FEN", o:"S.BAKAY"}, {d:"FEN", o:"S.BAKAY"}, {d:"SEÇ.MAT", o:"S.KARAGÖ"}, {d:"TRK 78", o:"E.GÜRSOY"}, {d:"TRK 78", o:"E.GÜRSOY"}],
+        5: [{d:"DİN", o:"A.ERSARI"}, {d:"DİN", o:"A.ERSARI"}, {d:"BED", o:"Y.KARACA"}, {d:"BED", o:"Y.KARACA"}, {d:"SOS", o:"M.MERAM"}, {d:"SOS", o:"M.MERAM"}, {d:"MAT", o:"C.KUTLU"}]
     }
 };
 
-function guncelle() {
+function updateTimer() {
     const simdi = new Date();
     const gun = simdi.getDay();
-    const suankiDakika = simdi.getHours() * 60 + simdi.getMinutes();
+    const suankiDk = simdi.getHours() * 60 + simdi.getMinutes();
+
+    const title = document.getElementById("lesson-name");
+    const counter = document.getElementById("countdown-timer");
 
     if (gun === 0 || gun === 6) {
-        document.getElementById("lesson-name").innerText = "Hafta Sonu";
-        document.getElementById("countdown-timer").innerText = "--";
+        title.innerText = "Hafta Sonu";
+        counter.innerText = "--";
         return;
     }
 
-    const aktifSaatler = (gun === 5) ? programVerisi.saatler.cuma : programVerisi.saatler.normal;
-    const bugunDersler = programVerisi.gunler[gun];
-    
+    const aktifSaatler = (gun === 5) ? dersProgrami.saatler.cuma : dersProgrami.saatler.normal;
+    const bugunDersler = dersProgrami.dersler[gun];
     let bulundu = false;
-    aktifSaatler.forEach((saat, index) => {
-        const [bH, bM] = saat.bas.split(":").map(Number);
-        const [eH, eM] = saat.bit.split(":").map(Number);
-        const baslangic = bH * 60 + bM;
-        const bitis = eH * 60 + eM;
 
-        if (suankiDakika >= baslangic && suankiDakika < bitis) {
-            document.getElementById("lesson-name").innerText = bugunDersler[index];
-            document.getElementById("countdown-timer").innerText = bitis - suankiDakika;
+    aktifSaatler.forEach((s, i) => {
+        const [bH, bM] = s.bas.split(":").map(Number);
+        const [eH, eM] = s.bit.split(":").map(Number);
+        const basDk = bH * 60 + bM;
+        const bitDk = eH * 60 + eM;
+
+        if (suankiDk >= basDk && suankiDk < bitDk) {
+            title.innerText = bugunDersler[i].d;
+            document.getElementById("teacher-name").innerText = bugunDersler[i].o;
+            counter.innerText = bitDk - suankiDk;
             bulundu = true;
         }
     });
 
     if (!bulundu) {
-        document.getElementById("lesson-name").innerText = "Teneffüs / Okul Kapalı";
-        document.getElementById("countdown-timer").innerText = "--";
+        title.innerText = "Teneffüs / Kapalı";
+        counter.innerText = "--";
+        document.getElementById("teacher-name").innerText = "";
     }
 }
 
@@ -68,5 +72,17 @@ function showSection(id) {
     toggleMenu();
 }
 
-setInterval(guncelle, 1000);
-guncelle();
+function tabloDoldur() {
+    const table = document.getElementById("schedule-table");
+    let html = "<thead><tr><th>Saat</th><th>Pzt</th><th>Sal</th><th>Çar</th><th>Per</th><th>Cum</th></tr></thead><tbody>";
+    for(let i=0; i<7; i++) {
+        html += `<tr><td>${i+1}</td>`;
+        for(let g=1; g<=5; g++) { html += `<td>${dersProgrami.dersler[g][i].d}</td>`; }
+        html += "</tr>";
+    }
+    table.innerHTML = html + "</tbody>";
+}
+
+setInterval(updateTimer, 1000);
+updateTimer();
+tabloDoldur();
