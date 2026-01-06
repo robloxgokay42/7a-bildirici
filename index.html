@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7-A Sınıf Panosu</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="menu-btn" onclick="toggleMenu()">☰</div>
+        <h1>7-A Sınıfı</h1>
+    </header>
+
+    <nav id="sideMenu">
+        <ul>
+            <li onclick="showPage('home')">🏠 Ana Sayfa</li>
+            <li onclick="showPage('info')">📋 Sınıf Bilgisi</li>
+            <li onclick="showPage('games')">🎮 Mini Oyunlar</li>
+        </ul>
+    </nav>
+
+    <main id="content">
+        <section id="home">
+            <div class="timer-card">
+                <h2 id="lesson-status">Yükleniyor...</h2>
+                <div id="countdown">00:00</div>
+                <p id="next-info"></p>
+            </div>
+        </section>
+
+        <section id="info" style="display:none;">
+            <h2>Sınıf Bilgileri</h2>
+            <div class="info-list">
+                <p><strong>Okul:</strong> Mareşal Mustafa Kemal O.O.</p>
+                <p><strong>Sınıf Rehber Öğrt:</strong> Abdi Işık</p>
+                <p><strong>Başkan:</strong> [Buraya Yaz]</p>
+                <p><strong>Yardımcı:</strong> [Buraya Yaz]</p>
+            </div>
+            <h3>Ders Programı</h3>
+            <table id="schedule-table"></table>
+        </section>
+
+        <section id="games" style="display:none;">
+            <h2>Mini Oyunlar</h2>
+            <p>Çok yakında burada eğlenceli oyunlar olacak!</p>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
