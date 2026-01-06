@@ -5,69 +5,226 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>7-A Sınıf Uygulaması</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- CSS BAŞLANGICI --- */
+        :root {
+            --primary: #3498db;
+            --dark: #2c3e50;
+            --bg: #f8f9fa;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        /* Üst Bar */
+        header {
+            background-color: var(--primary);
+            color: white;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            position: fixed;
+            top: 0; width: 100%; z-index: 1000;
+            box-sizing: border-box;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        header h1 { font-size: 1.2rem; margin: 0; }
+        /* Hamburger Menü */
+        .menu-btn {
+            width: 25px; height: 18px;
+            display: flex; flex-direction: column;
+            justify-content: space-between; cursor: pointer;
+        }
+        .menu-btn div { width: 100%; height: 3px; background: white; border-radius: 2px; }
+
+        /* Yan Menü */
+        #sideMenu {
+            position: fixed; top: 0; right: -280px;
+            width: 280px; height: 100%;
+            background: white; z-index: 2000;
+            transition: 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        }
+        #sideMenu.active { right: 0; }
+        .menu-header {
+            background: var(--dark); color: white;
+            padding: 20px; display: flex; justify-content: space-between;
+        }
+        #sideMenu ul { list-style: none; padding: 0; margin: 0; }
+        #sideMenu li { padding: 20px; border-bottom: 1px solid #eee; font-weight: 500; }
+
+        .overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            display: none; z-index: 1500;
+        }
+        .overlay.active { display: block; }
+
+        /* İçerik Alanı */
+        main { margin-top: 60px; padding: 20px; box-sizing: border-box; }
+        section { display: none; }
+        section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* SAYAÇ TASARIMI (Görsele Uygun) */
+        .timer-container {
+            height: calc(100vh - 120px);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        .lesson-title { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin: 0; }
+        .teacher-title { font-size: 1rem; color: #777; margin-bottom: 20px; }
+        
+        .countdown-row { display: flex; align-items: center; }
+        #countdown-timer { font-size: 9rem; font-weight: 800; line-height: 1; color: #000; }
+        .label-box { display: flex; flex-direction: column; margin-left: 10px; }
+        .dk { font-size: 2.5rem; font-weight: 700; line-height: 1; }
+        .kaldi { font-size: 1.4rem; font-weight: 600; color: #555; }
+        
+        #next-lesson-info { margin-top: 30px; font-style: italic; color: #888; }
+
+        /* Bilgi Kartları */
+        .card {
+            background: white; padding: 20px; border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px;
+        }
+        .card h2 { margin-top: 0; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        th, td { border: 1px solid #eee; padding: 8px; text-align: center; }
+        th { background: var(--primary); color: white; }
+        .table-wrap { overflow-x: auto; }
+    </style>
 </head>
 <body>
 
     <header>
         <h1>7-A Sınıfı</h1>
         <div class="menu-btn" onclick="toggleMenu()">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
+            <div></div><div></div><div></div>
         </div>
     </header>
 
     <nav id="sideMenu">
-        <div class="menu-header">Menü <span onclick="toggleMenu()">✕</span></div>
+        <div class="menu-header">Menü <span onclick="toggleMenu()" style="cursor:pointer">✕</span></div>
         <ul>
-            <li onclick="showSection('home')">🏠 Ana Sayfa</li>
-            <li onclick="showSection('info')">📋 Sınıf Bilgisi</li>
+            <li onclick="showSec('home')">🏠 Ana Sayfa</li>
+            <li onclick="showSec('info')">📋 Sınıf Bilgisi</li>
         </ul>
     </nav>
 
     <div class="overlay" onclick="toggleMenu()"></div>
 
-    <main id="main-content">
-        
-        <section id="home-section" class="active-section">
+    <main>
+        <section id="home" class="active">
             <div class="timer-container">
-                <div class="current-lesson-info">
-                    <h2 id="lesson-name">Ders Yükleniyor...</h2>
-                    <p id="teacher-name"></p>
-                </div>
+                <p id="lesson-name" class="lesson-title">Ders Yükleniyor...</p>
+                <p id="teacher-name" class="teacher-title"></p>
+                
                 <div class="countdown-row">
-                    <span id="countdown-timer">--</span>
+                    <span id="countdown-timer">00</span>
                     <div class="label-box">
-                        <span class="dk-text">DK.</span>
-                        <span class="kaldi-text">KALDI</span>
+                        <span class="dk">DK.</span>
+                        <span class="kaldi">KALDI</span>
                     </div>
                 </div>
-                <p id="next-lesson-info">Sonraki ders: ...</p>
+                
+                <p id="next-lesson-info">Sıradaki: ...</p>
             </div>
         </section>
 
-        <section id="info-section">
-            <div class="info-card">
+        <section id="info">
+            <div class="card">
                 <h2>Sınıf Bilgileri</h2>
-                <ul>
-                    <li><strong>Okul:</strong> Mareşal Mustafa Kemal Ortaokulu</li>
-                    <li><strong>Sınıf / Şube:</strong> 7-A</li>
-                    <li><strong>Sınıf Öğretmeni:</strong> Abdi Işık</li>
-                    <li><strong>Sınıf Başkanı:</strong> Elif]</li>
-                    <li><strong>Başkan Yardımcısı:</strong> Salih</li>
-                </ul>
+                <p><strong>Okul:</strong> Mareşal Mustafa Kemal Ortaokulu</p>
+                <p><strong>Öğretmen:</strong> Abdi Işık</p>
+                <p><strong>Sınıf Başkanı:</strong> Elif</p>
+                <p><strong>Yardımcı:</strong> Salih</p>
             </div>
-            <div class="schedule-container">
-                <h3>Haftalık Ders Programı</h3>
-                <div class="table-responsive">
-                    <table id="schedule-table"></table>
+            <div class="card">
+                <h2>Ders Programı</h2>
+                <div class="table-wrap">
+                    <table id="progTable"></table>
                 </div>
             </div>
         </section>
-
     </main>
 
-    <script src="script.js"></script>
+    <script>
+        // --- JAVASCRIPT BAŞLANGICI ---
+        const program = {
+            saatler: {
+                normal: ["08:50-09:30", "09:45-10:25", "10:40-11:20", "11:30-12:10", "12:40-13:20", "13:30-14:10", "14:20-15:00"],
+                cuma: ["08:50-09:30", "09:45-10:25", "10:35-11:10", "11:10-11:45", "12:00-12:40", "13:15-13:55", "14:10-14:50"]
+            },
+            dersler: {
+                1: ["SEÇ.İNG", "SEÇ.İNG", "FEN", "FEN", "TRK 78", "TEKTAS", "TEKTAS"],
+                2: ["MAT", "MAT", "İNG 7-8", "İNG 7-8", "SOS", "GÖR", "SEÇ.KÜL"],
+                3: ["MAT", "MAT", "SEÇ.KÜL", "MÜZ", "TRK 78", "TRK 78", "REH"],
+                4: ["İNG 7-8", "İNG 7-8", "FEN", "FEN", "SEÇ.MAT", "TRK 78", "TRK 78"],
+                5: ["DİN", "DİN", "BED", "BED", "SOS", "SOS", "MAT"]
+            }
+        };
+
+        function update() {
+            const simdi = new Date();
+            const gun = simdi.getDay(); // 1: Pzt, 5: Cum
+            const dk = simdi.getHours() * 60 + simdi.getMinutes();
+
+            if (gun < 1 || gun > 5) {
+                document.getElementById("lesson-name").innerText = "Hafta Sonu";
+                document.getElementById("countdown-timer").innerText = "--";
+                return;
+            }
+
+            const aktifSaatler = (gun === 5) ? program.saatler.cuma : program.saatler.normal;
+            const bugunDersler = program.dersler[gun];
+            let found = false;
+
+            aktifSaatler.forEach((s, i) => {
+                const [bas, bit] = s.split("-");
+                const [bH, bM] = bas.split(":").map(Number);
+                const [eH, eM] = bit.split(":").map(Number);
+                const basDk = bH * 60 + bM;
+                const bitDk = eH * 60 + eM;
+
+                if (dk >= basDk && dk < bitDk) {
+                    document.getElementById("lesson-name").innerText = bugunDersler[i];
+                    document.getElementById("countdown-timer").innerText = bitDk - dk;
+                    found = true;
+                }
+            });
+
+            if(!found) {
+                document.getElementById("lesson-name").innerText = "Teneffüs";
+                document.getElementById("countdown-timer").innerText = "--";
+            }
+        }
+
+        function toggleMenu() {
+            document.getElementById("sideMenu").classList.toggle("active");
+            document.querySelector(".overlay").classList.toggle("active");
+        }
+
+        function showSec(id) {
+            document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+            document.getElementById(id).classList.add("active");
+            toggleMenu();
+        }
+
+        // Tabloyu doldur
+        const table = document.getElementById("progTable");
+        let html = "<tr><th>Saat</th><th>Pzt</th><th>Sal</th><th>Çar</th><th>Per</th><th>Cum</th></tr>";
+        for(let i=0; i<7; i++) {
+            html += `<tr><td>${i+1}</td><td>${program.dersler[1][i]}</td><td>${program.dersler[2][i]}</td><td>${program.dersler[3][i]}</td><td>${program.dersler[4][i]}</td><td>${program.dersler[5][i]}</td></tr>`;
+        }
+        table.innerHTML = html;
+
+        setInterval(update, 1000);
+        update();
+    </script>
 </body>
 </html>
