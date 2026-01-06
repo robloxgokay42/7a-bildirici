@@ -1,140 +1,99 @@
-:root {
-    --primary-color: #3498db;
-    --secondary-color: #2c3e50;
-    --bg-color: #ffffff;
-    --text-color: #000000;
-    --header-height: 60px;
+const dersProgrami = {
+    saatler: {
+        normal: [
+            { bas: "08:50", bit: "09:30" }, { bas: "09:45", bit: "10:25" },
+            { bas: "10:40", bit: "11:20" }, { bas: "11:30", bit: "12:10" },
+            { bas: "12:40", bit: "13:20" }, { bas: "13:30", bit: "14:10" },
+            { bas: "14:20", bit: "15:00" }
+        ],
+        cuma: [
+            { bas: "08:50", bit: "09:30" }, { bas: "09:45", bit: "10:25" },
+            { bas: "10:35", bit: "11:10" }, { bas: "11:10", bit: "11:45" },
+            { bas: "12:00", bit: "12:40" }, { bas: "13:15", bit: "13:55" },
+            { bas: "14:10", bit: "14:50" }
+        ]
+    },
+    dersler: {
+        1: [{ders:"SEÇ. İNG", ogrt:"A. IŞIK"}, {ders:"SEÇ. İNG", ogrt:"A. IŞIK"}, {ders:"FEN", ogrt:"S. BAKAY"}, {ders:"FEN", ogrt:"S. BAKAY"}, {ders:"TRK 78", ogrt:"E. GÜRSOY"}, {ders:"TEK TAS", ogrt:"D. KARAGÖ"}, {ders:"TEK TAS", ogrt:"D. KARAGÖ"}],
+        2: [{ders:"MAT", ogrt:"C. KUTLU"}, {ders:"MAT", ogrt:"C. KUTLU"}, {ders:"İNG 7-8", ogrt:"A. IŞIK"}, {ders:"İNG 7-8", ogrt:"A. IŞIK"}, {ders:"SOS", ogrt:"M. MERAM"}, {ders:"GÖR", ogrt:"E. KARAKA"}, {ders:"SEÇ. KÜL", ogrt:"H. KOÇHAN"}],
+        3: [{ders:"MAT", ogrt:"C. KUTLU"}, {ders:"MAT", ogrt:"C. KUTLU"}, {ders:"SEÇ. KÜL", ogrt:"H. KOÇHAN"}, {ders:"MÜZ", ogrt:"H. ERDOĞA"}, {ders:"TRK 78", ogrt:"E. GÜRSOY"}, {ders:"TRK 78", ogrt:"E. GÜRSOY"}, {ders:"REH", ogrt:"A. IŞIK"}],
+        4: [{ders:"İNG 7-8", ogrt:"A. IŞIK"}, {ders:"İNG 7-8", ogrt:"A. IŞIK"}, {ders:"FEN", ogrt:"S. BAKAY"}, {ders:"FEN", ogrt:"S. BAKAY"}, {ders:"SEÇ. MAT", ogrt:"S. KARAGÖ"}, {ders:"TRK 78", ogrt:"E. GÜRSOY"}, {ders:"TRK 78", ogrt:"E. GÜRSOY"}],
+        5: [{ders:"DİN", ogrt:"A. ERSARI"}, {ders:"DİN", ogrt:"A. ERSARI"}, {ders:"BED", ogrt:"Y. KARACA"}, {ders:"BED", ogrt:"Y. KARACA"}, {ders:"SOS", ogrt:"M. MERAM"}, {ders:"SOS", ogrt:"M. MERAM"}, {ders:"MAT", ogrt:"C. KUTLU"}]
+    }
+};
+
+function saatDakikaToDakika(saatStr) {
+    const [saat, dakika] = saatStr.split(":").map(Number);
+    return saat * 60 + dakika;
 }
 
-body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    overflow-x: hidden;
+function sayaciGuncelle() {
+    const simdi = new Date();
+    const gun = simdi.getDay();
+    const suankiDakika = simdi.getHours() * 60 + simdi.getMinutes();
+
+    const lessonNameEl = document.getElementById("lesson-name");
+    const teacherNameEl = document.getElementById("teacher-name");
+    const countdownEl = document.getElementById("countdown-timer");
+    const nextLessonEl = document.getElementById("next-lesson-info");
+
+    if (gun === 0 || gun === 6) {
+        lessonNameEl.innerText = "İyi Tatiller!";
+        countdownEl.innerText = "--";
+        nextLessonEl.innerText = "Pazartesi görüşürüz.";
+        return;
+    }
+
+    const bugunkuSaatler = (gun === 5) ? dersProgrami.saatler.cuma : dersProgrami.saatler.normal;
+    const bugunkuDersler = dersProgrami.dersler[gun];
+    let dersteMi = false;
+
+    for (let i = 0; i < bugunkuSaatler.length; i++) {
+        const bas = saatDakikaToDakika(bugunkuSaatler[i].bas);
+        const bit = saatDakikaToDakika(bugunkuSaatler[i].bit);
+
+        if (suankiDakika >= bas && suankiDakika < bit) {
+            dersteMi = true;
+            lessonNameEl.innerText = bugunkuDersler[i].ders;
+            teacherNameEl.innerText = bugunkuDersler[i].ogrt;
+            countdownEl.innerText = bit - suankiDakika;
+            nextLessonEl.innerText = (i + 1 < bugunkuDersler.length) ? `Sonraki: ${bugunkuDersler[i+1].ders}` : "Gün bitti!";
+            break;
+        }
+    }
+
+    if (!dersteMi) {
+        lessonNameEl.innerText = "Teneffüs / Kapalı";
+        countdownEl.innerText = "--";
+    }
 }
 
-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0 20px;
-    height: var(--header-height);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    box-sizing: border-box;
+function toggleMenu() {
+    document.getElementById("sideMenu").classList.toggle("active");
+    document.querySelector(".overlay").classList.toggle("active");
 }
 
-header h1 { margin: 0; font-size: 1.2rem; }
-
-/* Yenilenmiş Modern Hamburger Menü */
-.menu-btn {
-    width: 30px;
-    height: 22px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    cursor: pointer;
+function showSection(id) {
+    document.querySelectorAll("section").forEach(s => s.classList.remove("active-section"));
+    document.getElementById(id + "-section").classList.add("active-section");
+    toggleMenu();
 }
 
-.menu-btn .bar {
-    width: 100%;
-    height: 3px;
-    background-color: white;
-    border-radius: 4px;
+function tabloyuDoldur() {
+    const table = document.getElementById("schedule-table");
+    let html = `<thead><tr><th>Saat</th><th>Pzt</th><th>Sal</th><th>Çar</th><th>Per</th><th>Cum</th></tr></thead><tbody>`;
+    for (let i = 0; i < 7; i++) {
+        html += `<tr><td>${i+1}. Ders</td>`;
+        for (let gun = 1; gun <= 5; gun++) {
+            html += `<td>${dersProgrami.dersler[gun][i].ders}</td>`;
+        }
+        html += `</tr>`;
+    }
+    table.innerHTML = html + "</tbody>";
 }
 
-#sideMenu {
-    position: fixed;
-    top: 0;
-    right: -280px;
-    width: 280px;
-    height: 100%;
-    background-color: white;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.2);
-    transition: right 0.3s ease-in-out;
-    z-index: 2000;
-}
-
-#sideMenu.active { right: 0; }
-
-.menu-header {
-    background-color: var(--secondary-color);
-    color: white;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-}
-
-#sideMenu ul { list-style: none; padding: 0; }
-#sideMenu li { padding: 18px 20px; border-bottom: 1px solid #eee; cursor: pointer; }
-
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    z-index: 1500;
-}
-.overlay.active { display: block; }
-
-#main-content {
-    margin-top: var(--header-height);
-    padding: 20px;
-}
-
-section { display: none; animation: fadeIn 0.4s ease; }
-section.active-section { display: block; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-/* SAYAÇ TASARIMI (TAM ORTALI VE GÖRSELDEKİ GİBİ) */
-.timer-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: calc(100vh - 120px);
-    text-align: center;
-}
-
-.countdown-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 0;
-}
-
-#countdown-timer {
-    font-size: 8rem; /* Büyük rakam */
-    font-weight: 700;
-    line-height: 1;
-}
-
-.label-box {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-left: 10px;
-    line-height: 1.1;
-}
-
-.dk-text { font-size: 2.5rem; font-weight: 700; }
-.kaldi-text { font-size: 1.2rem; font-weight: 600; color: #333; }
-
-/* Sınıf Bilgisi ve Tablo */
-.info-card, .schedule-container {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-}
-
-.table-responsive { overflow-x: auto; }
-#schedule-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-#schedule-table th, #schedule-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-#schedule-table th { background-color: var(--primary-color); color: white; }
+document.addEventListener("DOMContentLoaded", () => {
+    sayaciGuncelle();
+    setInterval(sayaciGuncelle, 1000);
+    tabloyuDoldur();
+});
